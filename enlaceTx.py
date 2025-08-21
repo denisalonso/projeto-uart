@@ -53,6 +53,8 @@ class TX(object):
         return(len(self.buffer))
 
     def getStatus(self):
+        while self.getIsBussy():
+            pass
         return(self.transLen)
         
 
