@@ -22,7 +22,7 @@ import numpy as np
 #use uma das 3 opcoes para atribuir à variável a porta usada
 #serialName = "/dev/ttyACM0"           # Ubuntu (variacao de)
 #serialName = "/dev/tty.usbmodem1411" # Mac    (variacao de)
-serialName = "COM4"                  # Windows(variacao de)  detectar sua porta e substituir aqui
+serialName = "COM9"                  # Windows(variacao de)  detectar sua porta e substituir aqui
 
 
 def main():
@@ -44,8 +44,11 @@ def main():
         #seus dados a serem transmitidos são um array bytes a serem transmitidos. Gere esta lista com o 
         #nome de txBuffer. Esla sempre irá armazenar os dados a serem enviados.
         
+        imageR = './uart.png'
+        imageW = './copia-recebida.png'
+
         #txBuffer = imagem em bytes!
-        txBuffer = b'\x12\x13\xAA\x01'  #isso é um array de bytes. apenas um exemplo para teste. Deverá ser substutuido pelo 
+        txBuffer = open(imageR, 'rb').read()  #isso é um array de bytes. apenas um exemplo para teste. Deverá ser substutuido pelo 
         #array correspondente à imagem
        
         print("meu array de bytes tem tamanho {}" .format(len(txBuffer)))
@@ -58,12 +61,13 @@ def main():
         #Cuidado! Apenas trasmita arrays de bytes!
                
         
-        com1.sendData(np.asarray(txBuffer))  #as array apenas como boa pratica para casos de ter uma outra forma de dados
+        com1.sendData(np.asarray(txBuffer))
+        time.sleep(1)  #as array apenas como boa pratica para casos de ter uma outra forma de dados
           
         # A camada enlace possui uma camada inferior, TX possui um método para conhecermos o status da transmissão
         # O método não deve estar fincionando quando usado como abaixo. deve estar retornando zero. Tente entender como esse método funciona e faça-o funcionar.
         txSize = com1.tx.getStatus()
-        print('enviou = {}' .format(txSize))
+        print(f'enviou = {txSize:.0f} bytes')
         
         #Agora vamos iniciar a recepção dos dados. Se algo chegou ao RX, deve estar automaticamente guardado
         #Observe o que faz a rotina dentro do thread RX
@@ -77,10 +81,11 @@ def main():
         rxBuffer, nRx = com1.getData(txLen)
         print("recebeu {} bytes" .format(len(rxBuffer)))
         
-        
+        f = open(imageW, 'wb')
+        f.write(rxBuffer)        
         #apenas para teste dos 4 bytes exemplo. NO caso da imagem devera ser retirado para nao poluir...
-        for i in range(len(rxBuffer)):
-            print("recebeu {}" .format(rxBuffer[i]))
+        # for i in range(len(rxBuffer)):
+        #     print("recebeu {}" .format(rxBuffer[i]))
         
 
             
